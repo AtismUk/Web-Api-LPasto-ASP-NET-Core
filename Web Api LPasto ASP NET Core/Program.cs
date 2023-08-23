@@ -4,8 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Web_Api_LPasto_ASP_NET_Core.Database;
+using Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.CommonZone;
 using Web_Api_LPasto_ASP_NET_Core.Database.Services;
+using Web_Api_LPasto_ASP_NET_Core.Services;
+using Web_Api_LPasto_ASP_NET_Core.Services.Interfaces;
 
 namespace Web_Api_LPasto_ASP_NET_Core
 {
@@ -24,7 +27,8 @@ namespace Web_Api_LPasto_ASP_NET_Core
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true
+                    ValidateIssuerSigningKey = true,
+                    RequireSignedTokens = true
                 };
             });
             builder.Services.AddAuthorization();
@@ -32,11 +36,15 @@ namespace Web_Api_LPasto_ASP_NET_Core
             {
                 x.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
             builder.Services.AddScoped<IBaseRepo<TypeDish>, BaseRepo<TypeDish>>()
                 .AddScoped<IBaseRepo<Dish>, BaseRepo<Dish>>()
                 .AddScoped<IBaseRepo<News>, BaseRepo<News>>()
                 .AddScoped<IBaseRepo<TypeNews>, BaseRepo<TypeNews>>()
-                .AddScoped<IBaseRepo<Restaurant>, BaseRepo<Restaurant>>();
+                .AddScoped<IBaseRepo<Restaurant>, BaseRepo<Restaurant>>()
+                .AddScoped<IBaseRepo<User>, BaseRepo<User>>()
+                .AddScoped<IBaseRepo<Employee>, BaseRepo<Employee>>()
+                .AddScoped<IAuthService, AuthService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
