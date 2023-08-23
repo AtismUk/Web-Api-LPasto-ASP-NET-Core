@@ -33,5 +33,35 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
             var allCategories = await _typeDishCrud.GetAllModelsAsync();
             return new JsonResult(allCategories);
         }
+
+        [HttpGet]
+        public async Task<JsonResult> MealByIdCategory(int id)
+        {
+            var allMeal = await _dishCrud.GetAllModelsAsync();
+            var mealByCategory = allMeal.Where(x => x.typeDishId == id);
+            return new JsonResult(mealByCategory);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> NewsTypes()
+        {
+            var newsType = await _typeNewsCrud.GetAllModelsAsync();
+            return new JsonResult(newsType);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> News()
+        {
+            var news = await _newsCrud.GetAllModelsAsync();
+            return new JsonResult(news);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> NewsByIdCategory(int id)
+        {
+            var allNews = await _newsCrud.GetAllModelsAsync();
+            var properNews = allNews.Where(x => x.typeNewsId == id);
+            return new JsonResult(properNews);
+        }
     }
 }

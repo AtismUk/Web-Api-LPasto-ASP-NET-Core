@@ -1,5 +1,8 @@
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Web_Api_LPasto_ASP_NET_Core.Database;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.CommonZone;
 using Web_Api_LPasto_ASP_NET_Core.Database.Services;
@@ -13,6 +16,17 @@ namespace Web_Api_LPasto_ASP_NET_Core
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
+            {
+                x.TokenValidationParameters = new()
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true
+                };
+            });
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<AppDbContext>(x =>
             {
