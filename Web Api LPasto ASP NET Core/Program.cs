@@ -44,7 +44,13 @@ namespace Web_Api_LPasto_ASP_NET_Core
                 .AddScoped<IBaseRepo<Restaurant>, BaseRepo<Restaurant>>()
                 .AddScoped<IBaseRepo<User>, BaseRepo<User>>()
                 .AddScoped<IBaseRepo<Employee>, BaseRepo<Employee>>()
-                .AddScoped<IAuthService, AuthService>();
+                .AddScoped<IAuthService, AuthService>()
+                .AddScoped<IBaseRepo<Order>, BaseRepo<Order>>()
+                .AddScoped<IBaseRepo<User>, BaseRepo<User>>()
+                .AddScoped<IBaseRepo<Dish>, BaseRepo<Dish>>()
+                .AddScoped<IBaseRepo<Order_Dish>, BaseRepo<Order_Dish>>()
+                .AddScoped<IBaseRepo<DishOption>, BaseRepo<DishOption>>()
+                .AddScoped<IEmployeeService, EmployeeService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

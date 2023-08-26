@@ -68,7 +68,5 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database.Services
             var res = await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
             return res;
         }
-
-        
     }
 }

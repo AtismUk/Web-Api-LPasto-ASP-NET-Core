@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.CommonZone;
 using Web_Api_LPasto_ASP_NET_Core.Database.Services;
+using Web_Api_LPasto_ASP_NET_Core.Models.Output;
 using Web_Api_LPasto_ASP_NET_Core.Services.Interfaces;
 
 namespace Web_Api_LPasto_ASP_NET_Core.Controllers
@@ -16,13 +17,16 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
         private readonly IBaseRepo<TypeNews> _typeNewsCrud;
         private readonly IBaseRepo<Restaurant> _restaurantCrud;
         private readonly IAuthService _authService;
+        private readonly IEmployeeService _employeeService;
 
         public BaseController(IBaseRepo<TypeDish> typeDishCrud,
             IBaseRepo<Dish> dishCrud,
             IBaseRepo<News> newsCrud,
             IBaseRepo<TypeNews> typeNewsCrud,
             IBaseRepo<Restaurant> restaurantCrud,
-            IAuthService authService)
+            IAuthService authService,
+            IEmployeeService employeeService
+            )
         {
             _typeDishCrud = typeDishCrud;
             _dishCrud = dishCrud;
@@ -30,6 +34,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
             _typeNewsCrud = typeNewsCrud;
             _restaurantCrud = restaurantCrud;
             _authService = authService;
+            _employeeService = employeeService;
         }
 
         [HttpGet("DishCategory")]
@@ -82,5 +87,6 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
                 return new JsonResult(StatusCode(505));
             }
         }
+
     }
 }

@@ -5,6 +5,8 @@
         public string Login { get; set; }
         public byte[] Password { get; set; }
         public byte[] Salt { get; set; }
+        public string? Name { get; set; }
+        public string? Phone { get; set; }
 
     }
 }

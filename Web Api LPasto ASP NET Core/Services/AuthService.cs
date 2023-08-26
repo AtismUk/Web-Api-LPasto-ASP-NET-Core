@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels;
 using Web_Api_LPasto_ASP_NET_Core.Database.Services;
@@ -12,10 +14,12 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
     {
         private readonly IBaseRepo<User> _userRepo;
         private readonly IBaseRepo<Employee> _employeeRepo;
-        public AuthService(IBaseRepo<User> userRepo, IBaseRepo<Employee> employeeRepo)
+        private readonly IConfiguration _configuration;
+        public AuthService(IBaseRepo<User> userRepo, IBaseRepo<Employee> employeeRepo, IConfiguration configuration)
         {
             _userRepo = userRepo;
             _employeeRepo = employeeRepo;
+            _configuration = configuration;
         }
         public async Task<JwtSecurityToken> AuthUser(string login, string password, string? secret, bool rememberMe)
         {
@@ -78,7 +82,9 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
         {
             var jwt = new JwtSecurityToken(claims: claims, 
                 expires: remember == true ? DateTime.UtcNow.Add(TimeSpan.FromDays(60)) : DateTime.UtcNow.Add(TimeSpan.FromDays(1)),
-                signingCredentials: new Microsoft.IdentityModel.Tokens.SigningCredentials()
+                issuer: _configuration["JwtSettings:Issuer"],
+                audience: _configuration["JwtSettings:Audience"],
+                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"])), SecurityAlgorithms.HmacSha256)
                 );
             return jwt;
         }

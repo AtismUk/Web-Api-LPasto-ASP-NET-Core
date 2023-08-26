@@ -8,12 +8,13 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database
     {
         public AppDbContext(DbContextOptions<AppDbContext> contextOptions) : base(contextOptions)
         {
+
             Database.EnsureCreated();
         }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
-        //    optionsBuilder.UseSqlServer("Server=HONOR_LAPTOP;Database=ApiLPasto;Trusted_Connection=True;TrustServerCertificate=True");
+        //    optionsBuilder.UseSqlServer("Server=DESKTOP-77LVPFQ;Database=ApiLPasto;Trusted_Connection=True;TrustServerCertificate=True");
         //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -29,6 +30,9 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database
                 new TypeDish() { Id = 9, Name = "Гарниры", imgGuid = "16628f7c-2b0e-4041-9255-4d4b73cd010e.jpg"},
                 new TypeDish() { Id = 10, Name = "Напитки", imgGuid = "ddfd07e0-419a-4a53-9cf0-50b6d2279617.jpg"},
                 });
+            modelBuilder.Entity<Dish>().HasData(new[] {new Dish() { Id = 1, Name = "Пепперони", Description = "идеальное сочетание хрустящего тонкого теста, сочной томатной основы, " +
+                "а также щедрого количества ароматной пепперони - тонко нарезанной итальянской колбаски из говядины с острым перцем. Каждый ингредиент, который мы используем," +
+                " подобран с любовью и заботой, чтобы создать истинное вкусовое совершенство.", foodValue = 0, Squirrels = 0, Oil = 0, Carbohydrates = 0, Price = 355, Weight = 489, isFitness = false, isVegan = false, typeDishId = 1 } });
         }
 
         public DbSet<User> Users { get; set; }
@@ -40,6 +44,11 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database
         public DbSet<TypeNews> TypeNews { get; set; }
         public DbSet<Restaurant> Restaurants { get; set; }
         public DbSet<Img> Imgs { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Order_Dish> Order_Dishes { get; set; }
+        public DbSet<StatusOrder> StatusOrders { get; set; }
+        public DbSet<DishOption> DishOptions { get; set; }
+
 
     }
 }

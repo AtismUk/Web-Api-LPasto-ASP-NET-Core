@@ -8,7 +8,6 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database.Services
         public Task<T> GetModelByIdAsync(int id);
         public Task<bool> DeleteModelByIdAsync(int id);
         public Task<bool> AddUpdateModelAsync(T model);
-
         public void DisposeContext();
     }
 }
