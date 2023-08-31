@@ -8,5 +8,6 @@
         public byte[] Salt { get; set; }
         public string Secret { get; set; }
         public int roleId { get; set; } 
+        public Role Role { get; set; }
     }
 }

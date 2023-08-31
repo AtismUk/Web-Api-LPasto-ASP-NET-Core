@@ -3,6 +3,6 @@
     public class StatusOrder : BaseModel
     {
         public string Name { get; set; }
-        public List<Order> Orders { get; set; } = new();
+        public List<Order> Orders { get; set; }
     }
 }

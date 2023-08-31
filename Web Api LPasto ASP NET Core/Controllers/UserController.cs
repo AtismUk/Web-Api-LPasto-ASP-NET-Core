@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models;
-using Web_Api_LPasto_ASP_NET_Core.Models.Input;
+using Web_Api_LPasto_ASP_NET_Core.Models.UserZone.Input;
 using Web_Api_LPasto_ASP_NET_Core.Services.Interfaces;
 
 namespace Web_Api_LPasto_ASP_NET_Core.Controllers

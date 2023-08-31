@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models;
 
 namespace Web_Api_LPasto_ASP_NET_Core.Database.Services
@@ -58,15 +59,39 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database.Services
             _dbContext.Dispose();
         }
 
+        public async Task<List<T>> GetAllModelsIncludeAsync<TInclude>(Expression<Func<T, TInclude>> includeExpression)
+        {
+            var res = await _dbSet.Include(includeExpression).ToListAsync();
+            return res;
+        }
         public async Task<List<T>> GetAllModelsAsync()
         {
             var res = await _dbSet.ToListAsync();
             return res;
         }
 
+        public async Task<List<T>> GetAllModelsIncludeAsync<TInclude, TIncludeTwo>(Expression<Func<T, TInclude>> includeExpression, Expression<Func<T, TIncludeTwo>> includeExpressionTwo)
+        {
+            var res = await _dbSet.Include(includeExpression).Include(includeExpressionTwo).ToListAsync();
+            return res;
+        }
+
         public async Task<T> GetModelByIdAsync(int id)
         {
             var res = await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
+            return res;
+        }
+
+        public async Task<T> GetModelByIdAsync<TInclude>(Expression<Func<T, TInclude>> includeExpression, int id)
+        {
+            var res = await _dbSet.Include(includeExpression).FirstOrDefaultAsync(x => x.Id == id);
+            return res;
+        }
+
+
+        public async Task<List<T>> GetAllModelsIncludeAsync<TInclude, TIncludeTwo, TIncludeTherd>(Expression<Func<T, TInclude>> includeExpression, Expression<Func<T, TIncludeTwo>> includeExpressionTwo, Expression<Func<T, TIncludeTherd>> IncludeExpressionTherd)
+        {
+            var res = await _dbSet.Include(includeExpression).Include(includeExpressionTwo).Include(IncludeExpressionTherd).ToListAsync();
             return res;
         }
     }

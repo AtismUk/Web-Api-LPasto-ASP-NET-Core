@@ -1,4 +1,4 @@
-﻿namespace Web_Api_LPasto_ASP_NET_Core.Models.Input
+﻿namespace Web_Api_LPasto_ASP_NET_Core.Models.UserZone.Input
 {
     public class BasketDish
     {

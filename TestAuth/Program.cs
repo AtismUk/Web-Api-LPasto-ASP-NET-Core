@@ -18,11 +18,13 @@ namespace TestAuth
             {
                 Login = "123",
                 Password = passwordHash,
-                Salt = salt
+                Salt = salt,
             };
 
             dbContext.Users.Add(user);
             dbContext.SaveChanges();
+
+
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels;
+﻿using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output;
 
-namespace Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output
+namespace Web_Api_LPasto_ASP_NET_Core.Models.UserZone.Output
 {
-    public class OrderOutput
+    public class OrderUserOutput
     {
         public int orderId { get; set; }
         public string Name { get; set; }

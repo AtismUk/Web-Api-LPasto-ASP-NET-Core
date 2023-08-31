@@ -14,5 +14,6 @@
         public TypeDish TypeDish { get; set; }
         public bool isVegan { get; set; }
         public bool isFitness { get; set; }
+        public List<DishOption> dishOptions { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Web_Api_LPasto_ASP_NET_Core.Models.Input
+﻿namespace Web_Api_LPasto_ASP_NET_Core.Models.UserZone.Input
 {
     public class CreateOrder
     {
@@ -10,6 +10,7 @@
         public bool isIntercom { get; set; }
         public bool paymentMethod { get; set; }
         public string Describe { get; set; }
+        public bool isDelivery {get; set;}
         public List<BasketDish> BasketDishes { get; set; }
     }
 }

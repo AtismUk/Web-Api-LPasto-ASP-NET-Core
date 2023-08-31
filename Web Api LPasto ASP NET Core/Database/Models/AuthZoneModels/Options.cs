@@ -1,8 +1,8 @@
 ﻿namespace Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels
 {
-    public class Role : BaseModel
+    public class Options : BaseModel
     {
         public string Name { get; set; }
-        public List<Employee> Employees { get; set; }
+        public double Price { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
         }
 
         [HttpGet("Orders")]
-        public async Task<List<OrderOutput>> GetOrders()
+        public async Task<List<OrderDeliveryOutput>> GetOrders()
         {
             var res = await _employeeService.GetAllOrders();
             return res;

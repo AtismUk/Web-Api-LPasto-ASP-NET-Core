@@ -3,6 +3,8 @@ using Web_Api_LPasto_ASP_NET_Core.Database.Models.CommonZone;
 using Web_Api_LPasto_ASP_NET_Core.Database.Services;
 using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output;
 using Web_Api_LPasto_ASP_NET_Core.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output.Intefaces;
 
 namespace Web_Api_LPasto_ASP_NET_Core.Services
 {
@@ -25,40 +27,37 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             _orderDishRepo = orderDishRepo;
             _dishOptionRepo = dishOptionRepo;
         }
-        public async Task<List<OrderOutput>> GetAllOrders()
+        public async Task<IEnumerable<IOrderOutput>> GetAllDeliveryOrders()
         {
-            List<OrderOutput> orderOutputs = new();
-            var orders = await _orderRepo.GetAllModelsAsync();
-            if (orders.Count > 0)
+            List<OrderDeliveryOutput> orderOutputs = new();
+            var ordersAll = await _orderRepo.GetAllModelsIncludeAsync(x => x.typeOrder, y => y.User, o => o.Order_Dishes);
+            var orders = ordersAll.Where(x => x.typeOrder.Name == "Доставка");
+            if (orders.Count() > 0)
             {
-                var Dish = await _dishRepo.GetAllModelsAsync();
-                var orderDishes = await _orderDishRepo.GetAllModelsAsync();
+                var dishes = await _dishRepo.GetAllModelsAsync();
                 var optionsDish = await _dishOptionRepo.GetAllModelsAsync();
-                var users = await _userRepo.GetAllModelsAsync();
                 foreach (var order in orders)
                 {
-                    var user = users.FirstOrDefault(x => x.Id == order.userId);
-                    var properOrderDishes = orderDishes.Where(x => x.orderId == order.Id);
-                    OrderOutput orderOutput = new()
+                    OrderDeliveryOutput orderOutput = new()
                     {
                         orderId = order.Id,
-                        Name = user.Name,
-                        Phone = user.Phone,
+                        Name = order.User.Name,
+                        Phone = order.User.Phone,
                         Address = order.Address,
                         Appartment = order.Appartment,
                         Entrance = order.Entrance,
-                        isIntercom = order.isIntercom,
+                        isIntercom = order.isIntercom.Value,
                         Floor = order.Floor,
                         Describe = order.Describe,
                         Created = order.Created,
                     };
                     orderOutput.listDishes = new();
-                    foreach (var orderDish in properOrderDishes)
+                    foreach (var orderDish in order.Order_Dishes)
                     {
                         DishOrder dishOrder = new()
                         {
                             dishId = orderDish.dishId,
-                            Name = Dish.FirstOrDefault(x => x.Id == orderDish.dishId).Name,
+                            Name = dishes.FirstOrDefault(x => x.Id == orderDish.dishId).Name,
                             Count = orderDish.Count,
                         };
                         if (orderDish.dishOptionId != null && orderDish.dishOptionId != 0)
@@ -75,5 +74,43 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             return orderOutputs;
            
         }
+
+        public async Task<IEnumerable<IOrderOutput>> GetAllPickOrdersUp()
+        {
+            var allOrders = await _orderRepo.GetAllModelsIncludeAsync(x => x.typeOrder, y => y.User, o => o.Order_Dishes);
+            var orders = allOrders.Where(x => x.typeOrder.Name == "Доствака");
+            List<PickOrderUpOutput> pickOrderUpOutputs = new();
+            if (orders.Count() > 0)
+            {
+                var dishes = await _dishRepo.GetAllModelsIncludeAsync(x => x.dishOptions);
+                foreach(var order in orders)
+                {
+                    PickOrderUpOutput pickOrderUpOutput = new()
+                    {
+                        Name = order.User.Name,
+                        Created = order.Created,
+                        Phone = order.User.Phone,
+                        orderId = order.Id,
+                    };
+                    foreach(var orderDish in order.Order_Dishes)
+                    {
+                        DishOrder dishOrder = new()
+                        {
+                            dishId = orderDish.Id,
+                            Count = orderDish.Count,
+                            Name = dishes.FirstOrDefault(x => x.Id == orderDish.Id).Name,
+                        };
+                        if (dishOrder.dishoptionId != null && dishOrder.dishoptionId != 0)
+                        {
+                            var option = dishes.FirstOrDefault(x => x.Id == orderDish.Id).dishOptions.FirstOrDefault(x => x.Id == orderDish.Id);
+                            dishOrder.optionName = option.Name;
+                        }
+                        pickOrderUpOutput.listDishes.Add(dishOrder);
+                    }
+                    pickOrderUpOutputs.Add(pickOrderUpOutput);
+                }
+            }
+            return pickOrderUpOutputs;
+        }
     }
-}
+} 
