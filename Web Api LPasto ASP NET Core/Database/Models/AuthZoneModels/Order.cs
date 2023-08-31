@@ -12,7 +12,8 @@
         public int statusOrderId { get; set; }
         public string Describe { get; set; }
         public bool paymentMethod { get; set; }
-        public StatusOrder StatusOrder { get; set; } = new();
-        public List<Order_Dish> Order_Dishes { get; set; } = new();
+        public DateTime Created { get; set; }
+        public StatusOrder StatusOrder { get; set; }
+        public List<Order_Dish> Order_Dishes { get; set; }
     }
 }

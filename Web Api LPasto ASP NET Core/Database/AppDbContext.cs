@@ -8,7 +8,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database
     {
         public AppDbContext(DbContextOptions<AppDbContext> contextOptions) : base(contextOptions)
         {
-
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 

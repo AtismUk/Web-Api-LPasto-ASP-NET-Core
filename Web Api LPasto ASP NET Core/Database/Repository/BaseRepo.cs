@@ -9,6 +9,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database.Services
         private readonly AppDbContext _dbContext;
         public BaseRepo(AppDbContext dbContext)
         {
+            _dbContext = dbContext;
             _dbSet = dbContext.Set<T>();
         }
 
@@ -16,7 +17,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database.Services
         {
             try
             {
-                if (model.Id > 0)
+                if (model.Id < 1)
                 {
                     _dbSet.Add(model);
                 }

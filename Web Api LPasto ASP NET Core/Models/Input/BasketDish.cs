@@ -3,7 +3,7 @@
     public class BasketDish
     {
         public int dishId { get; set; }
-        public int dishOtionId { get; set; }
+        public int? dishOtionId { get; set; }
         public int Count { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels;
 using Web_Api_LPasto_ASP_NET_Core.Database.Services;
-using Web_Api_LPasto_ASP_NET_Core.Models.Output;
+using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output;
 using Web_Api_LPasto_ASP_NET_Core.Services.Interfaces;
 
 namespace Web_Api_LPasto_ASP_NET_Core.Controllers

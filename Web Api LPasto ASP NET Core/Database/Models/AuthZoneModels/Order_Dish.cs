@@ -10,7 +10,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels
         public int? dishOptionId { get; set; }
 
         public int Count { get; set; }
-        public Order Order { get; set; } = new();
-        public DishOption DishOption { get; set; } = new();
+        public Order Order { get; set; }
+        public DishOption DishOption { get; set; }
     }
 }

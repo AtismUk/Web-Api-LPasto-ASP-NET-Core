@@ -1,7 +1,7 @@
 ﻿using Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.CommonZone;
 using Web_Api_LPasto_ASP_NET_Core.Database.Services;
-using Web_Api_LPasto_ASP_NET_Core.Models.Output;
+using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output;
 using Web_Api_LPasto_ASP_NET_Core.Services.Interfaces;
 
 namespace Web_Api_LPasto_ASP_NET_Core.Services
@@ -41,22 +41,32 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                     var properOrderDishes = orderDishes.Where(x => x.orderId == order.Id);
                     OrderOutput orderOutput = new()
                     {
+                        orderId = order.Id,
                         Name = user.Name,
                         Phone = user.Phone,
                         Address = order.Address,
                         Appartment = order.Appartment,
                         Entrance = order.Entrance,
+                        isIntercom = order.isIntercom,
                         Floor = order.Floor,
+                        Describe = order.Describe,
+                        Created = order.Created,
                     };
                     orderOutput.listDishes = new();
                     foreach (var orderDish in properOrderDishes)
                     {
-
-                        orderOutput.listDishes.Add(new()
+                        DishOrder dishOrder = new()
                         {
-                            Name = Dish.FirstOrDefault(x => x.Id == orderDish.Id).Name,
+                            dishId = orderDish.dishId,
+                            Name = Dish.FirstOrDefault(x => x.Id == orderDish.dishId).Name,
                             Count = orderDish.Count,
-                        });
+                        };
+                        if (orderDish.dishOptionId != null && orderDish.dishOptionId != 0)
+                        {
+                            dishOrder.dishoptionId = orderDish.dishOptionId.Value;
+                            dishOrder.optionName = optionsDish.First(x => x.Id == orderDish.dishOptionId).Name;
+                        }
+                        orderOutput.listDishes.Add(dishOrder);
                     }
                     orderOutputs.Add(orderOutput);
                 }
