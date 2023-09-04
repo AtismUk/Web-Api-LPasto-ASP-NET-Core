@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.CommonZone;
 using Web_Api_LPasto_ASP_NET_Core.Database.Services;
@@ -37,9 +38,11 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
         }
 
         [HttpGet("DishCategory")]
-        public async Task<JsonResult> DishCategories()
+        [Authorize]
+        public async Task<JsonResult> DishCategories(int restairantId)
         {
             var allCategories = await _typeDishCrud.GetAllModelsAsync();
+            var properCategories = allCategories.Where(x => x.restaurantId == restairantId);
             return new JsonResult(allCategories);
         }
 

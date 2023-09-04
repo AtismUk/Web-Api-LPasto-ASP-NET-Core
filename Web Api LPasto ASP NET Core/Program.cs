@@ -23,12 +23,13 @@ namespace Web_Api_LPasto_ASP_NET_Core
             {
                 x.TokenValidationParameters = new()
                 {
+                    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    RequireSignedTokens = true
                 };
             });
             builder.Services.AddAuthorization();
@@ -70,6 +71,7 @@ namespace Web_Api_LPasto_ASP_NET_Core
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseStaticFiles();

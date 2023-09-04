@@ -31,7 +31,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
         public async Task<List<OrderDeliveryOutput>> GetAllDeliveryOrders()
         {
             List<OrderDeliveryOutput> orderOutputs = new();
-            var ordersAll = await _orderRepo.GetAllModelsAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishes, s => s.StatusOrder });
+            var ordersAll = await _orderRepo.GetAllModelsAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishe, s => s.StatusOrder });
             var orders = ordersAll.Where(x => x.typeOrder.Name == "Доставка");
             if (orders.Count() > 0)
             {
@@ -55,7 +55,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                         statusOrderId = order.statusOrderId
                     };
                     orderOutput.listDishes = new();
-                    foreach (var orderDish in order.Order_Dishes)
+                    foreach (var orderDish in order.Order_Dishe)
                     {
                         orderOutput.listDishes.Add(CollectOrderDishes(orderDish, dishes));
                     }
@@ -69,7 +69,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
 
         public async Task<List<PickOrderUpOutput>> GetAllPickOrdersUp()
         {
-            var allOrders = await _orderRepo.GetAllModelsAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishes, s => s.StatusOrder });
+            var allOrders = await _orderRepo.GetAllModelsAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishe, s => s.StatusOrder });
             var orders = allOrders.Where(x => x.typeOrder.Name == "Доствака");
             List<PickOrderUpOutput> pickOrderUpOutputs = new();
             if (orders.Count() > 0)
@@ -86,7 +86,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                         statusName = order.StatusOrder.Name,
                         statusOrderId = order.statusOrderId
                     };
-                    foreach(var orderDish in order.Order_Dishes)
+                    foreach(var orderDish in order.Order_Dishe)
                     {
                         pickOrderUpOutput.listDishes.Add(CollectOrderDishes(orderDish, dishes));
                     }

@@ -6,6 +6,7 @@
         public string Description { get; set; }
         public string Location { get; set; }
         public bool isVeranda { get; set; }
+        public List<TypeDish> TypeDishes { get; set; }
 
     }
 }

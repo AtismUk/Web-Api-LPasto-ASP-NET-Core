@@ -1,4 +1,6 @@
-﻿namespace Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels
+﻿using Web_Api_LPasto_ASP_NET_Core.Database.Models.CommonZone;
+
+namespace Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels
 {
     public class Order : BaseModel
     {
@@ -16,6 +18,8 @@
         public DateTime Created { get; set; }
         public StatusOrder StatusOrder { get; set; }
         public TypeOrder typeOrder { get; set; }
-        public List<Order_Dish> Order_Dishes { get; set; }
+        public List<Order_Dish> Order_Dishe { get; set; }
+        public int restaurantId { get; set; }
+        public Restaurant Restaurant { get; set; }
     }
 }
