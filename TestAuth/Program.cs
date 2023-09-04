@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Web_Api_LPasto_ASP_NET_Core.Database;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels;
+using Web_Api_LPasto_ASP_NET_Core.Database.Models.CommonZone;
+using Web_Api_LPasto_ASP_NET_Core.Database.Services;
 using Web_Api_LPasto_ASP_NET_Core.Services;
 
 namespace TestAuth
@@ -10,6 +12,12 @@ namespace TestAuth
         static void Main(string[] args)
         {
             AppDbContext dbContext = new(new Microsoft.EntityFrameworkCore.DbContextOptions<AppDbContext>());
+            //BaseRepo<Dish> orderRepo = new(dbContext);
+
+            //var res = orderRepo.Check(new List<System.Linq.Expressions.Expression<Func<Dish, object>>>() { x => x.TypeDish});
+
+            //Console.WriteLine(res.Result.First().TypeDish.Name);
+            //Console.ReadKey();
 
             var salt = SecurityPassword.SaltPassword();
             var passwordHash = SecurityPassword.HashPassword("123", salt);

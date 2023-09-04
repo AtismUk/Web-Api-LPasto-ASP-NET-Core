@@ -8,13 +8,14 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database
     {
         public AppDbContext(DbContextOptions<AppDbContext> contextOptions) : base(contextOptions)
         {
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer("Server=HONOR_LAPTOP;Database=ApiLPasto;Trusted_Connection=True;TrustServerCertificate=True");
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Server=DESKTOP-77LVPFQ;Database=ApiLPasto;Trusted_Connection=True;TrustServerCertificate=True");
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +31,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database
                 new TypeDish() { Id = 9, Name = "Гарниры", imgGuid = "16628f7c-2b0e-4041-9255-4d4b73cd010e.jpg"},
                 new TypeDish() { Id = 10, Name = "Напитки", imgGuid = "ddfd07e0-419a-4a53-9cf0-50b6d2279617.jpg"},
                 });
+            modelBuilder.Entity<StatusOrder>().HasData(new[] { new StatusOrder() { Id = 1, Name = "В обработке" } });
             modelBuilder.Entity<TypeOrder>().HasData(new[] { new TypeOrder() { Id = 1, Name = "Доставка" } });
             modelBuilder.Entity<Dish>().HasData(new[] {new Dish() { Id = 1, Name = "Пепперони", Description = "идеальное сочетание хрустящего тонкого теста, сочной томатной основы, " +
                 "а также щедрого количества ароматной пепперони - тонко нарезанной итальянской колбаски из говядины с острым перцем. Каждый ингредиент, который мы используем," +

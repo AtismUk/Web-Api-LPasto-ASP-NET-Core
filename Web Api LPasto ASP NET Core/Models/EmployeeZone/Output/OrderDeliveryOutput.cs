@@ -17,5 +17,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output
         public bool paymentMethod { get; set; }
         public DateTime Created { get; set; }
         public List<DishOrder> listDishes { get; set; } = new();
+        public int statusOrderId { get; set; }
+        public string statusName { get; set; }
     }
 }

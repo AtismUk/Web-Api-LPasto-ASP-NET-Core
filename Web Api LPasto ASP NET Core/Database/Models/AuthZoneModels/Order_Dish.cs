@@ -8,8 +8,8 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels
         public int orderId { get; set; }
         public int dishId { get; set; }
         public int? dishOptionId { get; set; }
-
         public int Count { get; set; }
+        public Dish Dish { get; set; }
         public Order Order { get; set; }
         public DishOption DishOption { get; set; }
     }

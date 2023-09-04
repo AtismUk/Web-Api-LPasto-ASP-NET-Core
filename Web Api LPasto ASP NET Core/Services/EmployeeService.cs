@@ -5,6 +5,7 @@ using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output;
 using Web_Api_LPasto_ASP_NET_Core.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output.Intefaces;
+using System.Linq.Expressions;
 
 namespace Web_Api_LPasto_ASP_NET_Core.Services
 {
@@ -27,10 +28,10 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             _orderDishRepo = orderDishRepo;
             _dishOptionRepo = dishOptionRepo;
         }
-        public async Task<IEnumerable<IOrderOutput>> GetAllDeliveryOrders()
+        public async Task<List<OrderDeliveryOutput>> GetAllDeliveryOrders()
         {
             List<OrderDeliveryOutput> orderOutputs = new();
-            var ordersAll = await _orderRepo.GetAllModelsIncludeAsync(x => x.typeOrder, y => y.User, o => o.Order_Dishes);
+            var ordersAll = await _orderRepo.GetAllModelsAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishes, s => s.StatusOrder });
             var orders = ordersAll.Where(x => x.typeOrder.Name == "Доставка");
             if (orders.Count() > 0)
             {
@@ -50,22 +51,13 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                         Floor = order.Floor,
                         Describe = order.Describe,
                         Created = order.Created,
+                        statusName = order.StatusOrder.Name,
+                        statusOrderId = order.statusOrderId
                     };
                     orderOutput.listDishes = new();
                     foreach (var orderDish in order.Order_Dishes)
                     {
-                        DishOrder dishOrder = new()
-                        {
-                            dishId = orderDish.dishId,
-                            Name = dishes.FirstOrDefault(x => x.Id == orderDish.dishId).Name,
-                            Count = orderDish.Count,
-                        };
-                        if (orderDish.dishOptionId != null && orderDish.dishOptionId != 0)
-                        {
-                            dishOrder.dishoptionId = orderDish.dishOptionId.Value;
-                            dishOrder.optionName = optionsDish.First(x => x.Id == orderDish.dishOptionId).Name;
-                        }
-                        orderOutput.listDishes.Add(dishOrder);
+                        orderOutput.listDishes.Add(CollectOrderDishes(orderDish, dishes));
                     }
                     orderOutputs.Add(orderOutput);
                 }
@@ -75,14 +67,14 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
            
         }
 
-        public async Task<IEnumerable<IOrderOutput>> GetAllPickOrdersUp()
+        public async Task<List<PickOrderUpOutput>> GetAllPickOrdersUp()
         {
-            var allOrders = await _orderRepo.GetAllModelsIncludeAsync(x => x.typeOrder, y => y.User, o => o.Order_Dishes);
+            var allOrders = await _orderRepo.GetAllModelsAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishes, s => s.StatusOrder });
             var orders = allOrders.Where(x => x.typeOrder.Name == "Доствака");
             List<PickOrderUpOutput> pickOrderUpOutputs = new();
             if (orders.Count() > 0)
             {
-                var dishes = await _dishRepo.GetAllModelsIncludeAsync(x => x.dishOptions);
+                var dishes = await _dishRepo.GetAllModelsAsync(new List<Expression<Func<Dish, object>>>() { x => x.dishOptions });
                 foreach(var order in orders)
                 {
                     PickOrderUpOutput pickOrderUpOutput = new()
@@ -91,26 +83,34 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                         Created = order.Created,
                         Phone = order.User.Phone,
                         orderId = order.Id,
+                        statusName = order.StatusOrder.Name,
+                        statusOrderId = order.statusOrderId
                     };
                     foreach(var orderDish in order.Order_Dishes)
                     {
-                        DishOrder dishOrder = new()
-                        {
-                            dishId = orderDish.Id,
-                            Count = orderDish.Count,
-                            Name = dishes.FirstOrDefault(x => x.Id == orderDish.Id).Name,
-                        };
-                        if (dishOrder.dishoptionId != null && dishOrder.dishoptionId != 0)
-                        {
-                            var option = dishes.FirstOrDefault(x => x.Id == orderDish.Id).dishOptions.FirstOrDefault(x => x.Id == orderDish.Id);
-                            dishOrder.optionName = option.Name;
-                        }
-                        pickOrderUpOutput.listDishes.Add(dishOrder);
+                        pickOrderUpOutput.listDishes.Add(CollectOrderDishes(orderDish, dishes));
                     }
                     pickOrderUpOutputs.Add(pickOrderUpOutput);
                 }
             }
             return pickOrderUpOutputs;
+        }
+
+
+        public DishOrder CollectOrderDishes(Order_Dish order_Dish, List<Dish> dishes)
+        {
+            DishOrder dishOrder = new()
+            {
+                dishId = order_Dish.dishId,
+                Count = order_Dish.Count,
+                Name = dishes.FirstOrDefault(x => x.Id == order_Dish.dishId).Name,
+            };
+            if (dishOrder.dishoptionId != null && dishOrder.dishoptionId != 0)
+            {
+                var option = dishes.FirstOrDefault(x => x.Id == order_Dish.Id).dishOptions.FirstOrDefault(x => x.Id == order_Dish.Id);
+                dishOrder.optionName = option.Name;
+            }
+            return dishOrder;
         }
     }
 } 

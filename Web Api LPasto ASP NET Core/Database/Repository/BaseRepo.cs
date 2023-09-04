@@ -59,20 +59,10 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database.Services
             _dbContext.Dispose();
         }
 
-        public async Task<List<T>> GetAllModelsIncludeAsync<TInclude>(Expression<Func<T, TInclude>> includeExpression)
-        {
-            var res = await _dbSet.Include(includeExpression).ToListAsync();
-            return res;
-        }
+
         public async Task<List<T>> GetAllModelsAsync()
         {
             var res = await _dbSet.ToListAsync();
-            return res;
-        }
-
-        public async Task<List<T>> GetAllModelsIncludeAsync<TInclude, TIncludeTwo>(Expression<Func<T, TInclude>> includeExpression, Expression<Func<T, TIncludeTwo>> includeExpressionTwo)
-        {
-            var res = await _dbSet.Include(includeExpression).Include(includeExpressionTwo).ToListAsync();
             return res;
         }
 
@@ -82,16 +72,23 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database.Services
             return res;
         }
 
-        public async Task<T> GetModelByIdAsync<TInclude>(Expression<Func<T, TInclude>> includeExpression, int id)
+        public async Task<T> GetModelByIdAsync<TInclude>(List<Expression<Func<T, TInclude>>> includeExpressions, int id)
         {
-            var res = await _dbSet.Include(includeExpression).FirstOrDefaultAsync(x => x.Id == id);
+            foreach (var includeExpression in includeExpressions)
+            {
+                await _dbSet.Include(includeExpression).ToListAsync();
+            }
+            var res = await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
             return res;
         }
 
-
-        public async Task<List<T>> GetAllModelsIncludeAsync<TInclude, TIncludeTwo, TIncludeTherd>(Expression<Func<T, TInclude>> includeExpression, Expression<Func<T, TIncludeTwo>> includeExpressionTwo, Expression<Func<T, TIncludeTherd>> IncludeExpressionTherd)
+        public async Task<List<T>> GetAllModelsAsync<TInclude>(List<Expression<Func<T, TInclude>>> includeExpressions)
         {
-            var res = await _dbSet.Include(includeExpression).Include(includeExpressionTwo).Include(IncludeExpressionTherd).ToListAsync();
+            foreach (var includeExpression in includeExpressions)
+            {
+                await _dbSet.Include(includeExpression).ToListAsync();
+            }
+            var res = await _dbSet.ToListAsync();
             return res;
         }
     }

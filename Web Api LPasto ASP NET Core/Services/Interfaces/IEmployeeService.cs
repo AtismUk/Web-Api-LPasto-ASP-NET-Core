@@ -5,8 +5,8 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services.Interfaces
 {
     public interface IEmployeeService
     {
-        Task<IEnumerable<IOrderOutput>> GetAllDeliveryOrders();
+        Task<List<OrderDeliveryOutput>> GetAllDeliveryOrders();
 
-        Task<IEnumerable<IOrderOutput>> GetAllPickOrdersUp();
+        Task<List<PickOrderUpOutput>> GetAllPickOrdersUp();
     }
 }

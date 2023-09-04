@@ -16,10 +16,17 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
             _employeeService = employeeService;
         }
 
-        [HttpGet("Orders")]
-        public async Task<List<OrderDeliveryOutput>> GetOrders()
+        [HttpGet("DeliveryOrders")]
+        public async Task<List<OrderDeliveryOutput>> GetDeliveryOrders()
         {
-            var res = await _employeeService.GetAllOrders();
+            var res = await _employeeService.GetAllDeliveryOrders();
+            return res as List<OrderDeliveryOutput>;
+        }
+
+        [HttpGet("PickItUpOrders")]
+        public async Task<List<PickOrderUpOutput>> GetPickItUpOrders()
+        {
+            var res = await _employeeService.GetAllPickOrdersUp();
             return res;
         }
     }
