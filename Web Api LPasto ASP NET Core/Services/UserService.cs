@@ -70,6 +70,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                         typeOrderId = typeOrder.Id,
                         statusOrderId = 1,
                         Created = System.DateTime.Now,
+                        restaurantId = 1
                     };
                     var res = await _OrderRepo.AddUpdateModelAsync(order);
                     if (res)

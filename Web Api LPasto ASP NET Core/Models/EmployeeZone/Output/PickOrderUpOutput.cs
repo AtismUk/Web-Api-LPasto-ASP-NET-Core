@@ -2,7 +2,7 @@
 
 namespace Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output
 {
-    public class PickOrderUpOutput : IOrderOutput
+    public class PickOrderUpOutput : IOrder
     {
         public int orderId { get; set; }
         public string Name { get; set; }

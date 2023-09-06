@@ -1,6 +1,6 @@
 ﻿namespace Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output.Intefaces
 {
-    public interface IOrderOutput
+    public interface IOrder
     {
         public int orderId { get; set; }
         public string Name { get; set; }

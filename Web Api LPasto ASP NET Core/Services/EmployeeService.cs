@@ -28,74 +28,57 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             _orderDishRepo = orderDishRepo;
             _dishOptionRepo = dishOptionRepo;
         }
-        public async Task<List<OrderDeliveryOutput>> GetAllDeliveryOrders()
+     
+
+        public async Task<IOrder> GetOrderById(int id)
         {
-            List<OrderDeliveryOutput> orderOutputs = new();
-            var ordersAll = await _orderRepo.GetAllModelsAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishe, s => s.StatusOrder });
-            var orders = ordersAll.Where(x => x.typeOrder.Name == "Доставка");
-            if (orders.Count() > 0)
+            var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishe, s => s.StatusOrder }, id);
+            if (order != null)
             {
-                var dishes = await _dishRepo.GetAllModelsAsync();
-                var optionsDish = await _dishOptionRepo.GetAllModelsAsync();
-                foreach (var order in orders)
-                {
-                    OrderDeliveryOutput orderOutput = new()
-                    {
-                        orderId = order.Id,
-                        Name = order.User.Name,
-                        Phone = order.User.Phone,
-                        Address = order.Address,
-                        Appartment = order.Appartment,
-                        Entrance = order.Entrance,
-                        isIntercom = order.isIntercom.Value,
-                        Floor = order.Floor,
-                        Describe = order.Describe,
-                        Created = order.Created,
-                        statusName = order.StatusOrder.Name,
-                        statusOrderId = order.statusOrderId
-                    };
-                    orderOutput.listDishes = new();
-                    foreach (var orderDish in order.Order_Dishe)
-                    {
-                        orderOutput.listDishes.Add(CollectOrderDishes(orderDish, dishes));
-                    }
-                    orderOutputs.Add(orderOutput);
-                }
-
+                new Exception("Не найден");
             }
-            return orderOutputs;
-           
-        }
-
-        public async Task<List<PickOrderUpOutput>> GetAllPickOrdersUp()
-        {
-            var allOrders = await _orderRepo.GetAllModelsAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishe, s => s.StatusOrder });
-            var orders = allOrders.Where(x => x.typeOrder.Name == "Доствака");
-            List<PickOrderUpOutput> pickOrderUpOutputs = new();
-            if (orders.Count() > 0)
+            IOrder orderOutput;
+            var dishes = await _dishRepo.GetAllModelsAsync(new List<Expression<Func<Dish, object>>>() { x => x.dishOptions });
+            if (order.typeOrder.Name == "Самовывоз")
             {
-                var dishes = await _dishRepo.GetAllModelsAsync(new List<Expression<Func<Dish, object>>>() { x => x.dishOptions });
-                foreach(var order in orders)
+                PickOrderUpOutput pickOrderUpOutput = new()
                 {
-                    PickOrderUpOutput pickOrderUpOutput = new()
-                    {
-                        Name = order.User.Name,
-                        Created = order.Created,
-                        Phone = order.User.Phone,
-                        orderId = order.Id,
-                        statusName = order.StatusOrder.Name,
-                        statusOrderId = order.statusOrderId
-                    };
-                    foreach(var orderDish in order.Order_Dishe)
-                    {
-                        pickOrderUpOutput.listDishes.Add(CollectOrderDishes(orderDish, dishes));
-                    }
-                    pickOrderUpOutputs.Add(pickOrderUpOutput);
-                }
+                    Name = order.User.Name,
+                    Created = order.Created,
+                    Phone = order.User.Phone,
+                    orderId = order.Id,
+                    statusName = order.StatusOrder.Name,
+                    statusOrderId = order.statusOrderId
+                };
+                orderOutput = pickOrderUpOutput;
             }
-            return pickOrderUpOutputs;
+            else
+            {
+                OrderDeliveryOutput orderDeliveryOutput = new()
+                {
+                    orderId = order.Id,
+                    Name = order.User.Name,
+                    Phone = order.User.Phone,
+                    Address = order.Address,
+                    Appartment = order.Appartment,
+                    Entrance = order.Entrance,
+                    isIntercom = order.isIntercom.Value,
+                    Floor = order.Floor,
+                    Describe = order.Describe,
+                    Created = order.Created,
+                    statusName = order.StatusOrder.Name,
+                    statusOrderId = order.statusOrderId
+                };
+                orderOutput = orderDeliveryOutput;
+            }
+            orderOutput.listDishes = new();
+            foreach (var orderDish in order.Order_Dishe)
+            {
+                orderOutput.listDishes.Add(CollectOrderDishes(orderDish, dishes));
+            }
+            return orderOutput;
         }
-
+      
 
         public DishOrder CollectOrderDishes(Order_Dish order_Dish, List<Dish> dishes)
         {
@@ -111,6 +94,24 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                 dishOrder.optionName = option.Name;
             }
             return dishOrder;
+        }
+
+        public async Task<List<OrderOutput>> GetAllOrders()
+        {
+            var orders = await _orderRepo.GetAllModelsAsync(new List<Expression<Func<Order, object>>>() { x => x.StatusOrder, x=> x.User });
+            List<OrderOutput> ordersOutput = new();
+            foreach (var order in orders)
+            {
+                OrderOutput orderOutput = new()
+                {
+                    orderId = order.Id,
+                    Date = order.Created,
+                    Status = order.StatusOrder.Name,
+                    userName = order.User.Name,
+                };
+                ordersOutput.Add(orderOutput);
+            }
+            return ordersOutput;
         }
     }
 } 

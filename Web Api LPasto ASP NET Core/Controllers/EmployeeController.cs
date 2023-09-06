@@ -16,18 +16,35 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
             _employeeService = employeeService;
         }
 
-        [HttpGet("DeliveryOrders")]
-        public async Task<List<OrderDeliveryOutput>> GetDeliveryOrders()
+
+        [HttpGet("Orders")]
+        public async Task<List<OrderOutput>> GetAllorders()
         {
-            var res = await _employeeService.GetAllDeliveryOrders();
-            return res as List<OrderDeliveryOutput>;
+            var res = await _employeeService.GetAllOrders();
+            return res as List<OrderOutput>;
         }
 
-        [HttpGet("PickItUpOrders")]
-        public async Task<List<PickOrderUpOutput>> GetPickItUpOrders()
+        [HttpGet("Order")]
+        public async Task<JsonResult> GetOrderById(int id)
         {
-            var res = await _employeeService.GetAllPickOrdersUp();
-            return res;
+            try
+            {
+                var res = await _employeeService.GetOrderById(id);
+                if (res is not OrderDeliveryOutput)
+                {
+                    return new JsonResult(res as OrderDeliveryOutput);
+                }
+                else
+                {
+                    return new JsonResult(res as PickOrderUpOutput);
+                }
+            }
+            catch (Exception)
+            {
+                return new JsonResult(StatusCode(404));
+            }
+
         }
+
     }
 }
