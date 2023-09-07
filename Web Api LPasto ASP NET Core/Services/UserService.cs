@@ -1,4 +1,5 @@
-﻿using Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels;
+﻿using Web_Api_LPasto_ASP_NET_Core.Constant;
+using Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.CommonZone;
 using Web_Api_LPasto_ASP_NET_Core.Database.Services;
 using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output;
@@ -45,11 +46,11 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                     TypeOrder typeOrder;
                     if (createOrder.isDelivery)
                     {
-                        typeOrder = allTypeOrders.FirstOrDefault(x => x.Name == "Доставка");
+                        typeOrder = allTypeOrders.FirstOrDefault(x => x.Name == StaticConstant.Delivery);
                     }
                     else
                     {
-                        typeOrder = allTypeOrders.FirstOrDefault(x => x.Name == "Самовывоз");
+                        typeOrder = allTypeOrders.FirstOrDefault(x => x.Name == StaticConstant.PickItUp);
                     }
 
                     if (typeOrder == null)

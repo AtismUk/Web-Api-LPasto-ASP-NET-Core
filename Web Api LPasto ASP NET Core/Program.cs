@@ -53,6 +53,7 @@ namespace Web_Api_LPasto_ASP_NET_Core
                 .AddScoped<IBaseRepo<DishOption>, BaseRepo<DishOption>>()
                 .AddScoped<IEmployeeService, EmployeeService>()
                 .AddScoped<IBaseRepo<TypeOrder>, BaseRepo<TypeOrder>>()
+                .AddScoped<IBaseRepo<Restaurant>, BaseRepo<Restaurant>>()
                 .AddScoped<IUserService, UserService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

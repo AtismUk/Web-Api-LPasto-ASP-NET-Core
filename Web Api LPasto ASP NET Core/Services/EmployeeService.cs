@@ -6,6 +6,7 @@ using Web_Api_LPasto_ASP_NET_Core.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output.Intefaces;
 using System.Linq.Expressions;
+using Web_Api_LPasto_ASP_NET_Core.Constant;
 
 namespace Web_Api_LPasto_ASP_NET_Core.Services
 {
@@ -39,7 +40,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             }
             IOrder orderOutput;
             var dishes = await _dishRepo.GetAllModelsAsync(new List<Expression<Func<Dish, object>>>() { x => x.dishOptions });
-            if (order.typeOrder.Name == "Самовывоз")
+            if (order.typeOrder.Name == StaticConstant.PickItUp)
             {
                 PickOrderUpOutput pickOrderUpOutput = new()
                 {

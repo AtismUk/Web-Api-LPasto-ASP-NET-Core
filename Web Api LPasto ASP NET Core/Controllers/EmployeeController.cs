@@ -30,14 +30,19 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
             try
             {
                 var res = await _employeeService.GetOrderById(id);
-                if (res is not OrderDeliveryOutput)
+                if (res is OrderDeliveryOutput)
                 {
                     return new JsonResult(res as OrderDeliveryOutput);
                 }
-                else
+                else if (res is PickOrderUpOutput)
                 {
                     return new JsonResult(res as PickOrderUpOutput);
                 }
+                else
+                {
+                    return new JsonResult(StatusCode(500));
+                }
+                
             }
             catch (Exception)
             {
