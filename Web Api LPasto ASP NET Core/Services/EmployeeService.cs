@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output.Intefaces;
 using System.Linq.Expressions;
 using Web_Api_LPasto_ASP_NET_Core.Constant;
+using MyMapper;
 
 namespace Web_Api_LPasto_ASP_NET_Core.Services
 {
@@ -55,21 +56,27 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             }
             else
             {
-                OrderDeliveryOutput orderDeliveryOutput = new()
-                {
-                    orderId = order.Id,
-                    Name = order.User.Name,
-                    Phone = order.User.Phone,
-                    Address = order.Address,
-                    Appartment = order.Appartment,
-                    Entrance = order.Entrance,
-                    isIntercom = order.isIntercom.Value,
-                    Floor = order.Floor,
-                    Describe = order.Describe,
-                    Created = order.Created,
-                    statusName = order.StatusOrder.Name,
-                    statusOrderId = order.statusOrderId
-                };
+                OrderDeliveryOutput orderDeliveryOutput = Mapper<Order, OrderDeliveryOutput>.MappingModels(order);
+                orderDeliveryOutput.orderId = order.Id;
+                orderDeliveryOutput.isIntercom = order.isIntercom.Value;
+                orderDeliveryOutput.statusName = order.StatusOrder.Name;
+                orderDeliveryOutput.Name = order.User.Name;
+                orderDeliveryOutput.Phone = order.User.Phone;
+                //OrderDeliveryOutput orderDeliveryOutput = new()
+                //{
+                //    orderId = order.Id,
+                //    Name = order.User.Name,
+                //    Phone = order.User.Phone,
+                //    Address = order.Address,
+                //    Appartment = order.Appartment,
+                //    Entrance = order.Entrance,
+                //    isIntercom = order.isIntercom.Value,
+                //    Floor = order.Floor,
+                //    Describe = order.Describe,
+                //    Created = order.Created,
+                //    statusName = order.StatusOrder.Name,
+                //    statusOrderId = order.statusOrderId
+                //};
                 orderOutput = orderDeliveryOutput;
             }
             orderOutput.listDishes = new();

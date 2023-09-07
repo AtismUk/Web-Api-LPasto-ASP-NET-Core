@@ -90,12 +90,12 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
             }
         }
 
-        [HttpGet("Restaurants")]
+        //[HttpGet("Restaurants")]
 
-        public async Task<JsonResult> GetRestairants()
-        {
+        //public async Task<JsonResult> GetRestairants()
+        //{
             
-        }
+        //}
 
     }
 }

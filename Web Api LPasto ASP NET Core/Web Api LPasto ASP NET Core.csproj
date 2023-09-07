@@ -19,4 +19,8 @@
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\MyMapper\MyMapper\MyMapper.csproj" />
+  </ItemGroup>
+
 </Project>

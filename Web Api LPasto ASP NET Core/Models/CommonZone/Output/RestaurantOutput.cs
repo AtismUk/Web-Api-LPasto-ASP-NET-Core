@@ -2,5 +2,9 @@
 {
     public class RestaurantOutput
     {
+        public string Name { get; set; }
+        public string Location { get; set; }
+        public bool isVeranda { get; set; }
+
     }
 }
