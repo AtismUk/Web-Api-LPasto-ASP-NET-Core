@@ -51,5 +51,11 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<JsonResult> ChangeOrder()
+        {
+
+        }
+
     }
 }

@@ -39,7 +39,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                         bool IsExist = await CheckDish(dish);
                         if (!IsExist)
                         {
-                            throw new Exception("Блюда не существует");
+                            throw new Exception("404");
                         }
                     }
                     var allTypeOrders = await _typeOrderRepo.GetAllModelsAsync();

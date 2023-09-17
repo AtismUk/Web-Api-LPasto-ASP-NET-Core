@@ -26,7 +26,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             var res = await ValidateUser(login, password, secret);
             if (res == null)
             {
-                throw new Exception("Пользователь не найден");
+                throw new Exception("404");
             }
             var claims = SetClaims(res);
             var jwt = GenerateToken(rememberMe, claims);
@@ -50,14 +50,14 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             user = users.FirstOrDefault(x => x.Login == login);
             if (user == null)
             {
-                throw new Exception("Не найден");
+                throw new Exception("404");
             }
             if (secret != null)
             {
                 var employee = user as Employee;
                 if (employee.Secret != secret)
                 {
-                    throw new Exception("Не найден");
+                    throw new Exception("404");
                 }
             }
             var passwordHash = SecurityPassword.HashPassword(password, user.Salt);

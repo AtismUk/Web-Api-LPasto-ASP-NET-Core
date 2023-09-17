@@ -31,16 +31,18 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             _dishOptionRepo = dishOptionRepo;
         }
      
-
+        // Получаем все заказы по Id
         public async Task<IOrder> GetOrderById(int id)
         {
             var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishe, s => s.StatusOrder }, id);
             if (order != null)
             {
-                new Exception("Не найден");
+                throw new Exception("Не найден");
             }
+            // Интерфейс от которого наследются все orderOutput
             IOrder orderOutput;
             var dishes = await _dishRepo.GetAllModelsAsync(new List<Expression<Func<Dish, object>>>() { x => x.dishOptions });
+            // Проверка если заказ на самовывоз
             if (order.typeOrder.Name == StaticConstant.PickItUp)
             {
                 PickOrderUpOutput pickOrderUpOutput = new()
@@ -54,9 +56,9 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                 };
                 orderOutput = pickOrderUpOutput;
             }
-            else
+            else if(order.typeOrder.Name == StaticConstant.Delivery)
             {
-                OrderDeliveryOutput orderDeliveryOutput = Mapper<Order, OrderDeliveryOutput>.MappingModels(order);
+                OrderDeliveryOutput orderDeliveryOutput = Mapper.MappingModels<Order, OrderDeliveryOutput>(order);
                 orderDeliveryOutput.orderId = order.Id;
                 orderDeliveryOutput.isIntercom = order.isIntercom.Value;
                 orderDeliveryOutput.statusName = order.StatusOrder.Name;
@@ -78,6 +80,10 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                 //    statusOrderId = order.statusOrderId
                 //};
                 orderOutput = orderDeliveryOutput;
+            }
+            else
+            {
+                throw new Exception("505");
             }
             orderOutput.listDishes = new();
             foreach (var orderDish in order.Order_Dishe)
@@ -121,5 +127,17 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             }
             return ordersOutput;
         }
+
+
+        public async Task<bool> ChangeOrder(changeO)
+        {
+            var order = _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { }, id);
+            if (order == null)
+            {
+                throw new Exception("404");
+            }
+
+        }
+
     }
 } 
