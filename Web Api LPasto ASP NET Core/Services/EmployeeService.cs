@@ -47,7 +47,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             // Проверка если заказ на самовывоз
             if (order.typeOrder.Name == StaticConstant.PickItUp)
             {
-                PickOrderUpOutput pickOrderUpOutput = new()
+                PickOrderPickItUpOutput pickOrderUpOutput = new()
                 {
                     Name = order.User.Name,
                     Created = order.Created,
@@ -56,7 +56,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                     statusName = order.StatusOrder.Name,
                     statusOrderId = order.statusOrderId,
                     TypeOrderName = order.typeOrder.Name,
-                    
+                    Describe = order.Describe,
                 };
                 orderOutput = pickOrderUpOutput;
             }
@@ -136,8 +136,8 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
 
         public async Task<bool> ChangeOrder(IOrderChange orderChange)
         {
-            var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { }, orderChange.orderId);
-            if (order == null)
+            var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { x=> x.Order_Dishe, s => s.StatusOrder }, orderChange.orderId);
+            if ((order == null) || order.StatusOrder.Name == StaticConstant.OrderIsMade)
             {
                 throw new Exception("404");
             }
@@ -145,6 +145,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             if (orderChange is ChangeOrderDeliveryInput)
             {
                 Mapper.Replace(orderChange as ChangeOrderDeliveryInput, order);
+
             }
             else if (orderChange is ChangeOrderPicItUpInput)
             {
@@ -160,5 +161,71 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             return res;
         }
 
+
+        public async Task<bool> ChangeDishOrder(ChangeOrderDishesInput dishOrderChangeInput)
+        {
+            var orderDish = await _orderDishRepo.GetModelByIdAsync(dishOrderChangeInput.orderDishId);
+            if ((orderDish == null))
+            {
+                return false;
+            }
+            var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { s => s.StatusOrder }, orderDish.orderId);
+            if((order == null) || order.StatusOrder.Name == StaticConstant.OrderIsMade)
+            {
+                return false;
+            }
+            var Dish = await _dishRepo.GetModelByIdAsync(dishOrderChangeInput.dishId);
+            if (Dish == null)
+            {
+                return false;
+            }
+
+            if (dishOrderChangeInput.dishOptionId != null && dishOrderChangeInput.dishOptionId > 0)
+            {
+                var dishOption = _dishOptionRepo.GetModelByIdAsync(dishOrderChangeInput.dishOptionId.Value);
+                if (dishOption == null)
+                {
+                    return false;
+                }
+            }
+            else if (dishOrderChangeInput.dishOptionId == 0)
+            {
+                dishOrderChangeInput.dishOptionId = null;
+            }
+
+            Mapper.Replace(dishOrderChangeInput, orderDish);
+            var res = await _orderDishRepo.AddUpdateModelAsync(orderDish);
+            return res;
+        }
+
+        public async Task<bool> AddDishOrder(AddDishOrderInput addDishOrderInput)
+        {
+            var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { s => s.StatusOrder, d => d.Order_Dishe }, addDishOrderInput.orderId);
+            if (order == null)
+            {
+                return false;
+            }
+            if (order.Order_Dishe.FirstOrDefault(x => x.dishId == addDishOrderInput.dishId) != null)
+            {
+                return false;
+            }
+
+            if ((addDishOrderInput.dishOptionId != null) && addDishOrderInput.dishOptionId > 0)
+            {
+                var optionDish = await _dishOptionRepo.GetModelByIdAsync(addDishOrderInput.dishOptionId.Value);
+                if (optionDish == null)
+                {
+                    return false;
+                }
+            }
+            else if(addDishOrderInput.dishOptionId == 0)
+            {
+                addDishOrderInput.dishOptionId = null;
+            }
+
+            Order_Dish order_Dish = Mapper.MappingModels<AddDishOrderInput, Order_Dish>(addDishOrderInput);
+            var res = await _orderDishRepo.AddUpdateModelAsync(order_Dish);
+            return res;
+        }
     }
 } 

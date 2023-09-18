@@ -35,9 +35,9 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
                 {
                     return new JsonResult(res as OrderDeliveryOutput);
                 }
-                else if (res is PickOrderUpOutput)
+                else if (res is PickOrderPickItUpOutput)
                 {
-                    return new JsonResult(res as PickOrderUpOutput);
+                    return new JsonResult(res as PickOrderPickItUpOutput);
                 }
                 else
                 {
@@ -52,7 +52,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
 
         }
 
-        [HttpPost("ChangeDelivery")]
+        [HttpPut("ChangeDelivery")]
         public async Task<StatusCodeResult> ChangeOrderDelivery([FromBody]ChangeOrderDeliveryInput changeOrderDeliveryInput)
         {
             if (changeOrderDeliveryInput != null)
@@ -66,7 +66,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
             return new StatusCodeResult(500);
         }
 
-        [HttpPost("ChangePicIpUp")]
+        [HttpPut("ChangePicIpUp")]
         public async Task<StatusCodeResult> ChangeOrderPicItUp([FromBody]ChangeOrderPicItUpInput changeOrderPicItUpInput)
         {
             if (changeOrderPicItUpInput != null)
@@ -74,11 +74,39 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
                 var res = await _employeeService.ChangeOrder(changeOrderPicItUpInput);
                 if (res == false)
                 {
-                    return new StatusCodeResult(200);
+                    return new StatusCodeResult(500);
                 }
             }
-            return new StatusCodeResult(500);
+            return new StatusCodeResult(200);
         }
 
+        [HttpPut("ChangeDishInOrder")]
+        public async Task<StatusCodeResult> ChangeDishInOrder([FromBody] ChangeOrderDishesInput dishOrderChangeInput)
+        {
+            if (dishOrderChangeInput != null)
+            {
+                var res = await _employeeService.ChangeDishOrder(dishOrderChangeInput);
+                if (res == false)
+                {
+                    return new StatusCodeResult(500);
+                }
+            }
+            return new StatusCodeResult(200);
+        }
+
+        [HttpPost("AddDishInOrder")]
+
+        public async Task<StatusCodeResult> AddDishInOrder([FromBody] AddDishOrderInput addDishOrderInput)
+        {
+            if (addDishOrderInput != null)
+            {
+                var res = await _employeeService.AddDishOrder(addDishOrderInput);
+                if (res == false)
+                {
+                    return new StatusCodeResult(500);
+                }
+            }
+            return new StatusCodeResult(200);
+        }
     }
 }
