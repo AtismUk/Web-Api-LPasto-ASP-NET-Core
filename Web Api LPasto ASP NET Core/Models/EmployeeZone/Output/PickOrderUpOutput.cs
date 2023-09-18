@@ -11,5 +11,6 @@ namespace Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output
         public DateTime Created { get; set; }
         public int statusOrderId { get; set; }
         public string statusName { get; set; }
+        public string TypeOrderName { get; set; }
     }
 }

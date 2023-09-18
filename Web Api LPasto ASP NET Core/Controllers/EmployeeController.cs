@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels;
 using Web_Api_LPasto_ASP_NET_Core.Database.Services;
+using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Input;
 using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output;
 using Web_Api_LPasto_ASP_NET_Core.Services.Interfaces;
 
@@ -42,7 +43,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
                 {
                     return new JsonResult(StatusCode(500));
                 }
-                
+
             }
             catch (Exception)
             {
@@ -51,10 +52,32 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<JsonResult> ChangeOrder()
+        [HttpPost("ChangeDelivery")]
+        public async Task<StatusCodeResult> ChangeOrderDelivery([FromBody]ChangeOrderDeliveryInput changeOrderDeliveryInput)
         {
+            if (changeOrderDeliveryInput != null)
+            {
+                var res = await _employeeService.ChangeOrder(changeOrderDeliveryInput);
+                if (res == false)
+                {
+                    return new StatusCodeResult(200);
+                }
+            }
+            return new StatusCodeResult(500);
+        }
 
+        [HttpPost("ChangePicIpUp")]
+        public async Task<StatusCodeResult> ChangeOrderPicItUp([FromBody]ChangeOrderPicItUpInput changeOrderPicItUpInput)
+        {
+            if (changeOrderPicItUpInput != null)
+            {
+                var res = await _employeeService.ChangeOrder(changeOrderPicItUpInput);
+                if (res == false)
+                {
+                    return new StatusCodeResult(200);
+                }
+            }
+            return new StatusCodeResult(500);
         }
 
     }

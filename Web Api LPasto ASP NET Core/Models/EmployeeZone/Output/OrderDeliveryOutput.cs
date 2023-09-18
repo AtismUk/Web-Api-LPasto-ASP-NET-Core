@@ -19,5 +19,6 @@ namespace Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output
         public List<DishOrder> listDishes { get; set; } = new();
         public int statusOrderId { get; set; }
         public string statusName { get; set; }
+        public string TypeOrderName { get; set; }
     }
 }

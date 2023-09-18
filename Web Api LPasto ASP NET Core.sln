@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web Api LPasto ASP NET Core
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestAuth", "TestAuth\TestAuth.csproj", "{FCBC39C2-7CE2-471C-9640-DAC9282A89A5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyMapper", "..\MyMapper\MyMapper\MyMapper.csproj", "{CDBB0C00-E7C1-4480-A1A8-515EE0320803}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyMapper", "MyMapper\MyMapper\MyMapper.csproj", "{5496182F-92CF-4F12-BFF1-49FA02392EF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{FCBC39C2-7CE2-471C-9640-DAC9282A89A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCBC39C2-7CE2-471C-9640-DAC9282A89A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCBC39C2-7CE2-471C-9640-DAC9282A89A5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CDBB0C00-E7C1-4480-A1A8-515EE0320803}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CDBB0C00-E7C1-4480-A1A8-515EE0320803}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CDBB0C00-E7C1-4480-A1A8-515EE0320803}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CDBB0C00-E7C1-4480-A1A8-515EE0320803}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5496182F-92CF-4F12-BFF1-49FA02392EF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5496182F-92CF-4F12-BFF1-49FA02392EF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5496182F-92CF-4F12-BFF1-49FA02392EF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5496182F-92CF-4F12-BFF1-49FA02392EF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

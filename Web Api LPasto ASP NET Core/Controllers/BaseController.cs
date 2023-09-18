@@ -79,15 +79,8 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
         [HttpGet("Auth")]
         public async Task<JsonResult> GetToken(string login, string password, string? secret, bool rememberMe)
         {
-            try
-            {
-                var jwt = await _authService.AuthUser(login, password, secret, rememberMe);
-                return new JsonResult(new JwtSecurityTokenHandler().WriteToken(jwt));
-            }
-            catch (Exception ex)
-            {
-                return new JsonResult(StatusCode(505));
-            }
+            var jwt = await _authService.AuthUser(login, password, secret, rememberMe);
+            return new JsonResult(new JwtSecurityTokenHandler().WriteToken(jwt));
         }
 
         //[HttpGet("Restaurants")]

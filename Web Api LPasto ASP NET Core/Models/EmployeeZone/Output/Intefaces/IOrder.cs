@@ -6,6 +6,7 @@
         public string Name { get; set; }
         public string Phone { get; set; }
         public string statusName { get; set; }
+        public string TypeOrderName { get; set; }
         public DateTime Created { get; set; }
         public List<DishOrder> listDishes { get; set; }
     }

@@ -1,6 +1,7 @@
-﻿using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output;
+﻿using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Input.Interface;
+using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output;
 
-namespace Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Input.Interface
+namespace Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Input
 {
     public class ChangeOrderPicItUpInput : IOrderChange
     {

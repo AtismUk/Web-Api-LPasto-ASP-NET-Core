@@ -4,6 +4,7 @@ using Web_Api_LPasto_ASP_NET_Core.Database;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.CommonZone;
 using Web_Api_LPasto_ASP_NET_Core.Database.Services;
+using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Input;
 using Web_Api_LPasto_ASP_NET_Core.Services;
 
 namespace TestAuth
@@ -33,23 +34,53 @@ namespace TestAuth
             //dbContext.Users.Add(user);
             //dbContext.SaveChanges();
 
-            user user = new()
+            //user user = new()
+            //{
+            //    Id = 0,
+            //    Name = "Anton"
+            //};
+
+            //var res = Mapper.CheckNull(user);
+            //Console.WriteLine(res);
+            //Console.ReadKey();
+
+            ChangeOrderDeliveryInput changeOrderDeliveryInput = new ChangeOrderDeliveryInput()
             {
-                Id = 0,
-                Name = "Anton"
+                orderId = 1,
+                Address = "Новый",
+                Appartment = "новый дом",
+                Describe = "gghjghjghjghjghjhjghjgghjghj",
+                Entrance = "3",
+                Floor = "5",
+                isIntercom = false,
+                paymentMethod = true,
+                Phone = null,
             };
 
-            var res = Mapper.CheckNull(user);
-            Console.WriteLine(res);
-            Console.ReadKey();
 
+            Order order = new Order()
+            {
+                Id = 1,
+                Address = "Не новый",
+                Appartment = "новый 312",
+                Describe = "4",
+                Entrance = "ваы",
+                Floor = "аыв",
+            };
+
+            Mapper.Replace(changeOrderDeliveryInput, order);
+            foreach (var propertys in order.GetType().GetProperties())
+            {
+                Console.WriteLine(propertys.Name + " = " + propertys.GetValue(order));
+            }
+            Console.ReadKey();
 
         }
     }
 
-    class user
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
+    //class user
+    //{
+    //    public int Id { get; set; }
+    //    public string Name { get; set; }
+    //}
 }

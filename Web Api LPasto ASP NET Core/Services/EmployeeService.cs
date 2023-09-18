@@ -8,6 +8,8 @@ using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output.Intefaces;
 using System.Linq.Expressions;
 using Web_Api_LPasto_ASP_NET_Core.Constant;
 using MyMapper;
+using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Input.Interface;
+using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Input;
 
 namespace Web_Api_LPasto_ASP_NET_Core.Services
 {
@@ -34,8 +36,8 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
         // Получаем все заказы по Id
         public async Task<IOrder> GetOrderById(int id)
         {
-            var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishe, s => s.StatusOrder }, id);
-            if (order != null)
+            var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishe, s => s.StatusOrder, t => t.typeOrder }, id);
+            if (order == null)
             {
                 throw new Exception("Не найден");
             }
@@ -52,7 +54,9 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                     Phone = order.User.Phone,
                     orderId = order.Id,
                     statusName = order.StatusOrder.Name,
-                    statusOrderId = order.statusOrderId
+                    statusOrderId = order.statusOrderId,
+                    TypeOrderName = order.typeOrder.Name,
+                    
                 };
                 orderOutput = pickOrderUpOutput;
             }
@@ -64,6 +68,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                 orderDeliveryOutput.statusName = order.StatusOrder.Name;
                 orderDeliveryOutput.Name = order.User.Name;
                 orderDeliveryOutput.Phone = order.User.Phone;
+                orderDeliveryOutput.statusName = order.typeOrder.Name;
                 //OrderDeliveryOutput orderDeliveryOutput = new()
                 //{
                 //    orderId = order.Id,
@@ -129,14 +134,30 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
         }
 
 
-        public async Task<bool> ChangeOrder(changeO)
+        public async Task<bool> ChangeOrder(IOrderChange orderChange)
         {
-            var order = _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { }, id);
+            var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { }, orderChange.orderId);
             if (order == null)
             {
                 throw new Exception("404");
             }
 
+            if (orderChange is ChangeOrderDeliveryInput)
+            {
+                Mapper.Replace(orderChange as ChangeOrderDeliveryInput, order);
+            }
+            else if (orderChange is ChangeOrderPicItUpInput)
+            {
+                Mapper.Replace(orderChange as ChangeOrderPicItUpInput, order);
+            }
+            else
+            {
+                throw new Exception("404");
+            }
+
+
+            var res = await _orderRepo.AddUpdateModelAsync(order);
+            return res;
         }
 
     }

@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MyMapper\MyMapper\MyMapper.csproj" />
+    <ProjectReference Include="..\MyMapper\MyMapper\MyMapper.csproj" />
   </ItemGroup>
 
 </Project>
