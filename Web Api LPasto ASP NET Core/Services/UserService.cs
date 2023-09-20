@@ -106,6 +106,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             return false;
         }
 
+        public async Task<>
 
         public async Task<bool> CheckDish(BasketDish basketDish)
         {

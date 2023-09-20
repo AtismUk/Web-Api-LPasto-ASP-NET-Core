@@ -103,6 +103,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
         {
             DishOrder dishOrder = new()
             {
+                dishOrderID = order_Dish.Id,
                 dishId = order_Dish.dishId,
                 Count = order_Dish.Count,
                 Name = dishes.FirstOrDefault(x => x.Id == order_Dish.dishId).Name,
@@ -225,6 +226,18 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
 
             Order_Dish order_Dish = Mapper.MappingModels<AddDishOrderInput, Order_Dish>(addDishOrderInput);
             var res = await _orderDishRepo.AddUpdateModelAsync(order_Dish);
+            return res;
+        }
+
+        public async Task<bool> DelateDishOrder(int id)
+        {
+            var dishInOrder = await _orderDishRepo.GetModelByIdAsync(new List<Expression<Func<Order_Dish, object>>> { o => o.Order, d => d.Dish }, id);
+            if ((dishInOrder == null) || (dishInOrder.Order == null) || (dishInOrder.Dish == null))
+            {
+                return false;
+            }
+
+            var res = await _orderDishRepo.DeleteModelByIdAsync(id);
             return res;
         }
     }

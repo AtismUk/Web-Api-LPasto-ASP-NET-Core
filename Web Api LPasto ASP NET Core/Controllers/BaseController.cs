@@ -77,10 +77,10 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
         }
 
         [HttpGet("Auth")]
-        public async Task<JsonResult> GetToken(string login, string password, string? secret, bool rememberMe)
+        public async Task<IActionResult> GetToken(string login, string password, string? secret, bool rememberMe)
         {
             var jwt = await _authService.AuthUser(login, password, secret, rememberMe);
-            return new JsonResult(new JwtSecurityTokenHandler().WriteToken(jwt));
+            return new OkObjectResult(new JwtSecurityTokenHandler().WriteToken(jwt));
         }
 
         //[HttpGet("Restaurants")]

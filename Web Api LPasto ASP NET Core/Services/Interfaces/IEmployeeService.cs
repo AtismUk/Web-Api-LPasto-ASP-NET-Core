@@ -12,5 +12,6 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services.Interfaces
         Task<bool> ChangeOrder(IOrderChange orderChange);
         Task<bool> ChangeDishOrder(ChangeOrderDishesInput dishOrderChangeInput);
         Task<bool> AddDishOrder(AddDishOrderInput addDishOrderInput);
+        Task<bool> DelateDishOrder(int id);
     }
 }
