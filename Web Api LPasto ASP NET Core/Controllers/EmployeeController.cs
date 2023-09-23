@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels;
 using Web_Api_LPasto_ASP_NET_Core.Database.Services;
@@ -21,36 +22,25 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
 
 
         [HttpGet("Orders")]
-        public async Task<List<OrderOutput>> GetAllorders()
+        public async Task<IActionResult> GetAllorders()
         {
             var res = await _employeeService.GetAllOrders();
-            return res as List<OrderOutput>;
+            if (res.IsValid == true)
+            {
+                return Ok(res);
+            }
+            return BadRequest(res);
         }
 
         [HttpGet("Order")]
-        public async Task<JsonResult> GetOrderById(int id)
+        public async Task<IActionResult> GetOrderById(int id)
         {
-            try
+            var res = await _employeeService.GetOrderById(id);
+            if (res.IsValid == true)
             {
-                var res = await _employeeService.GetOrderById(id);
-                if (res is OrderDeliveryOutput)
-                {
-                    return new JsonResult(res as OrderDeliveryOutput);
-                }
-                else if (res is PickOrderPickItUpOutput)
-                {
-                    return new JsonResult(res as PickOrderPickItUpOutput);
-                }
-                else
-                {
-                    return new JsonResult(StatusCode(500));
-                }
-
+                return Ok(res);
             }
-            catch (Exception)
-            {
-                return new JsonResult(StatusCode(404));
-            }
+            return BadRequest(res);
 
         }
 
@@ -60,12 +50,12 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
             if (changeOrderDeliveryInput != null)
             {
                 var res = await _employeeService.ChangeOrder(changeOrderDeliveryInput);
-                if (res != false)
+                if (res.IsValid == true)
                 {
-                    return new OkResult();
+                    return Ok(res);
                 }
             }
-            return new BadRequestResult();
+            return BadRequest();
         }
 
         [HttpPut("ChangePicIpUp")]
@@ -74,26 +64,26 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
             if (changeOrderPicItUpInput != null)
             {
                 var res = await _employeeService.ChangeOrder(changeOrderPicItUpInput);
-                if (res != false)
+                if (res.IsValid == true)
                 {
-                    return new OkResult();
+                    return Ok(res);
                 }
             }
-            return new BadRequestResult();
+            return BadRequest();
         }
 
         [HttpPut("ChangeDishInOrder")]
-        public async Task<StatusCodeResult> ChangeDishInOrder([FromBody] ChangeOrderDishesInput dishOrderChangeInput)
+        public async Task<IActionResult> ChangeDishInOrder([FromBody] ChangeOrderDishesInput dishOrderChangeInput)
         {
             if (dishOrderChangeInput != null)
             {
                 var res = await _employeeService.ChangeDishOrder(dishOrderChangeInput);
-                if (res != false)
+                if (res.IsValid == true)
                 {
-                    return new OkResult();
+                    return Ok(res);
                 }
             }
-            return new BadRequestResult();
+            return BadRequest();
         }
 
         [HttpPost("AddDishInOrder")]
@@ -103,12 +93,12 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
             if (addDishOrderInput != null)
             {
                 var res = await _employeeService.AddDishOrder(addDishOrderInput);
-                if (res != false)
+                if (res.IsValid == true)
                 {
-                    return new OkResult();
+                    return Ok(res);
                 }
             }
-            return new BadRequestResult();
+            return BadRequest();
         }
 
         [HttpDelete("DeleteDishInOrder")]
@@ -117,12 +107,27 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
             if (dishInOrderId > 0)
             {
                 var res = await _employeeService.DelateDishOrder(dishInOrderId);
-                if (res != false)
+                if (res.IsValid == true)
                 {
-                    return new OkResult();
+                    return Ok(res);
                 }
             }
-            return new BadRequestResult();
+            return BadRequest("Id должен быть больше 0");
+        }
+
+        [HttpDelete("DeleteOrder")]
+        public async Task<IActionResult> DeleteOrder(int id)
+        {
+            if (id > 0)
+            {
+                var res = await _employeeService.DeleteOrder(id);
+                if (res.IsValid)
+                {
+                    return Ok(res);
+                }
+                return BadRequest(res);
+            }
+            return BadRequest("Id должен быть больше 0");
         }
 
     }

@@ -10,6 +10,7 @@ using Web_Api_LPasto_ASP_NET_Core.Constant;
 using MyMapper;
 using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Input.Interface;
 using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Input;
+using Web_Api_LPasto_ASP_NET_Core.Models;
 
 namespace Web_Api_LPasto_ASP_NET_Core.Services
 {
@@ -34,12 +35,16 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
         }
      
         // Получаем все заказы по Id
-        public async Task<IOrder> GetOrderById(int id)
+        public async Task<ResponseService<IOrder>> GetOrderById(int id)
         {
             var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { x => x.typeOrder, y => y.User, o => o.Order_Dishe, s => s.StatusOrder, t => t.typeOrder }, id);
             if (order == null)
             {
-                throw new Exception("Не найден");
+                return new ResponseService<IOrder>()
+                {
+                    IsValid = false,
+                    Message = "Не найдено",
+                };
             }
             // Интерфейс от которого наследются все orderOutput
             IOrder orderOutput;
@@ -69,33 +74,26 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                 orderDeliveryOutput.Name = order.User.Name;
                 orderDeliveryOutput.Phone = order.User.Phone;
                 orderDeliveryOutput.statusName = order.typeOrder.Name;
-                //OrderDeliveryOutput orderDeliveryOutput = new()
-                //{
-                //    orderId = order.Id,
-                //    Name = order.User.Name,
-                //    Phone = order.User.Phone,
-                //    Address = order.Address,
-                //    Appartment = order.Appartment,
-                //    Entrance = order.Entrance,
-                //    isIntercom = order.isIntercom.Value,
-                //    Floor = order.Floor,
-                //    Describe = order.Describe,
-                //    Created = order.Created,
-                //    statusName = order.StatusOrder.Name,
-                //    statusOrderId = order.statusOrderId
-                //};
                 orderOutput = orderDeliveryOutput;
             }
             else
             {
-                throw new Exception("505");
+                return new ResponseService<IOrder>()
+                {
+                    IsValid = false,
+                    Message = "Ошибка сервера",
+                };
             }
             orderOutput.listDishes = new();
             foreach (var orderDish in order.Order_Dishe)
             {
                 orderOutput.listDishes.Add(CollectOrderDishes(orderDish, dishes));
             }
-            return orderOutput;
+            return new ResponseService<IOrder>()
+            {
+                IsValid = true,
+                Result = orderOutput
+            };
         }
       
 
@@ -116,9 +114,17 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             return dishOrder;
         }
 
-        public async Task<List<OrderOutput>> GetAllOrders()
+        public async Task<ResponseService<List<OrderOutput>>> GetAllOrders()
         {
-            var orders = await _orderRepo.GetAllModelsAsync(new List<Expression<Func<Order, object>>>() { x => x.StatusOrder, x=> x.User });
+            var orders = await _orderRepo.GetAllModelsAsync(new List<Expression<Func<Order, object>>>() { x => x.StatusOrder, x => x.User });
+            if (orders == null)
+            {
+                return new ResponseService<List<OrderOutput>>()
+                {
+                    IsValid = false,
+                    Message = "Не найдено"
+                };
+            }
             List<OrderOutput> ordersOutput = new();
             foreach (var order in orders)
             {
@@ -131,16 +137,24 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                 };
                 ordersOutput.Add(orderOutput);
             }
-            return ordersOutput;
+            return new ResponseService<List<OrderOutput>>()
+            {
+                IsValid = true,
+                Result = ordersOutput
+            };
         }
 
 
-        public async Task<bool> ChangeOrder(IOrderChange orderChange)
+        public async Task<ResponseService<bool>> ChangeOrder(IOrderChange orderChange)
         {
             var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { x=> x.Order_Dishe, s => s.StatusOrder }, orderChange.orderId);
             if ((order == null) || order.StatusOrder.Name == StaticConstant.OrderIsMade)
             {
-                throw new Exception("404");
+                return new ResponseService<bool>()
+                {
+                    IsValid = false,
+                    Message = "Не найдено"
+                };
             }
 
             if (orderChange is ChangeOrderDeliveryInput)
@@ -154,31 +168,44 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             }
             else
             {
-                throw new Exception("404");
+                return new ResponseService<bool>()
+                {
+                    IsValid = false,
+                    Message = "Ошибка сервера"
+                };
             }
 
 
             var res = await _orderRepo.AddUpdateModelAsync(order);
-            return res;
+            return new ResponseService<bool>()
+            {
+                IsValid = true,
+                Result = res
+            };
         }
 
 
-        public async Task<bool> ChangeDishOrder(ChangeOrderDishesInput dishOrderChangeInput)
+        public async Task<ResponseService<bool>> ChangeDishOrder(ChangeOrderDishesInput dishOrderChangeInput)
         {
+            ResponseService<bool> responseService = new()
+            {
+                IsValid = false,
+                Message = "Не найдено"
+            };
             var orderDish = await _orderDishRepo.GetModelByIdAsync(dishOrderChangeInput.orderDishId);
             if ((orderDish == null))
             {
-                return false;
+                return responseService;
             }
             var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { s => s.StatusOrder }, orderDish.orderId);
             if((order == null) || order.StatusOrder.Name == StaticConstant.OrderIsMade)
             {
-                return false;
+                return responseService;
             }
             var Dish = await _dishRepo.GetModelByIdAsync(dishOrderChangeInput.dishId);
             if (Dish == null)
             {
-                return false;
+                return responseService;
             }
 
             if (dishOrderChangeInput.dishOptionId != null && dishOrderChangeInput.dishOptionId > 0)
@@ -186,7 +213,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                 var dishOption = _dishOptionRepo.GetModelByIdAsync(dishOrderChangeInput.dishOptionId.Value);
                 if (dishOption == null)
                 {
-                    return false;
+                    return responseService;
                 }
             }
             else if (dishOrderChangeInput.dishOptionId == 0)
@@ -196,19 +223,33 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
 
             Mapper.Replace(dishOrderChangeInput, orderDish);
             var res = await _orderDishRepo.AddUpdateModelAsync(orderDish);
-            return res;
+            if (res == false)
+            {
+                responseService.Message = "Ошибка сервера";
+            }
+            else
+            {
+                responseService.IsValid = true;
+                responseService.Result = res;
+            }
+            return responseService;
         }
 
-        public async Task<bool> AddDishOrder(AddDishOrderInput addDishOrderInput)
+        public async Task<ResponseService<bool>> AddDishOrder(AddDishOrderInput addDishOrderInput)
         {
+            ResponseService<bool> responseService = new()
+            {
+                IsValid = false,
+                Message = "Не найдено"
+            };
             var order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>>() { s => s.StatusOrder, d => d.Order_Dishe }, addDishOrderInput.orderId);
             if (order == null)
             {
-                return false;
+                return responseService;
             }
             if (order.Order_Dishe.FirstOrDefault(x => x.dishId == addDishOrderInput.dishId) != null)
             {
-                return false;
+                return responseService;
             }
 
             if ((addDishOrderInput.dishOptionId != null) && addDishOrderInput.dishOptionId > 0)
@@ -216,7 +257,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
                 var optionDish = await _dishOptionRepo.GetModelByIdAsync(addDishOrderInput.dishOptionId.Value);
                 if (optionDish == null)
                 {
-                    return false;
+                    return responseService;
                 }
             }
             else if(addDishOrderInput.dishOptionId == 0)
@@ -226,19 +267,73 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
 
             Order_Dish order_Dish = Mapper.MappingModels<AddDishOrderInput, Order_Dish>(addDishOrderInput);
             var res = await _orderDishRepo.AddUpdateModelAsync(order_Dish);
-            return res;
+            if (res == false)
+            {
+                responseService.Message = "Ошибка сервера";
+            }
+            else
+            {
+                responseService.IsValid = true;
+                responseService.Result = res;
+            }
+            return responseService;
         }
 
-        public async Task<bool> DelateDishOrder(int id)
+        public async Task<ResponseService<bool>> DelateDishOrder(int id)
         {
+            ResponseService<bool> responseService = new()
+            {
+                IsValid = false
+            };
             var dishInOrder = await _orderDishRepo.GetModelByIdAsync(new List<Expression<Func<Order_Dish, object>>> { o => o.Order, d => d.Dish }, id);
             if ((dishInOrder == null) || (dishInOrder.Order == null) || (dishInOrder.Dish == null))
             {
-                return false;
+                responseService.Message = "Не найдено";
+                return responseService;
             }
 
             var res = await _orderDishRepo.DeleteModelByIdAsync(id);
-            return res;
+            if(res == false)
+            {
+                responseService.Message = "Ошибка сервера";
+            }
+            else
+            {
+                responseService.IsValid = true;
+                responseService.Result = res;
+            }
+            return responseService;
         }
+
+        public async Task<ResponseService<bool>> DeleteOrder(int id)
+        {
+            ResponseService<bool> responseService = new()
+            {
+                IsValid = false
+            };
+            Order order = await _orderRepo.GetModelByIdAsync(new List<Expression<Func<Order, object>>> { d => d.Order_Dishe },id);
+            if (order == null)
+            {
+                responseService.Message = "Не найдено";
+                return responseService;
+            }
+            foreach (var dishInOrder in order.Order_Dishe)
+            {
+                await _orderDishRepo.DeleteModelByIdAsync(dishInOrder.Id);
+            }
+            _orderRepo.DisposeContext();
+            var res = await _orderRepo.DeleteModelByIdAsync(id);
+            if (res == false)
+            {
+                responseService.Message = "Ошибка сервера";
+            }
+            else
+            {
+                responseService.IsValid = true;
+                responseService.Result = res;
+            }
+            return responseService;
+        }
+
     }
 } 

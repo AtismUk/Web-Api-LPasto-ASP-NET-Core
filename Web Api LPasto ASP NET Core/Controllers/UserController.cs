@@ -19,14 +19,14 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
         }
 
         [HttpPost("Order")]
-        public async Task<JsonResult> CreateOrder(CreateOrder createOrder)
+        public async Task<IActionResult> CreateOrder(CreateOrder createOrder)
         {
             var res = await _userService.CreateOrder(createOrder);
-            if (res)
+            if (res.IsValid == true)
             {
-                return new JsonResult(StatusCode(200));
+                return Ok(res);
             }
-            return new JsonResult(StatusCode(500));
+            return BadRequest(res);
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -34,8 +34,8 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
         public async Task<JsonResult> GetInfoUser(int id)
         {
             var userLogin = User.FindFirst("Login").Value;
-            
 
+            return null;
         }
     }
 }
