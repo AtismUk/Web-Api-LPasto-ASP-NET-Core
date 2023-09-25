@@ -15,7 +15,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
-        //    optionsBuilder.UseSqlServer("Server=HONOR_LAPTOP;Database=ApiLPasto;Trusted_Connection=True;TrustServerCertificate=True");
+        //    optionsBuilder.UseSqlServer("Server=DESKTOP-77LVPFQ;Database=ApiLPasto;Trusted_Connection=True;TrustServerCertificate=True");
         //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

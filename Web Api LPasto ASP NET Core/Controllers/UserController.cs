@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Web_Api_LPasto_ASP_NET_Core.Database.Models;
 using Web_Api_LPasto_ASP_NET_Core.Models.UserZone.Input;
 using Web_Api_LPasto_ASP_NET_Core.Services.Interfaces;
@@ -21,7 +22,12 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
         [HttpPost("Order")]
         public async Task<IActionResult> CreateOrder(CreateOrder createOrder)
         {
-            var res = await _userService.CreateOrder(createOrder);
+            string login = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+            if (login == null)
+            {
+                return BadRequest();
+            }
+            var res = await _userService.CreateOrder(createOrder, login);
             if (res.IsValid == true)
             {
                 return Ok(res);
@@ -29,13 +35,20 @@ namespace Web_Api_LPasto_ASP_NET_Core.Controllers
             return BadRequest(res);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet("InfoUser")]
-        public async Task<JsonResult> GetInfoUser(int id)
+        [HttpGet("GetOrders")]
+        public async Task<IActionResult> GetInfoUser()
         {
-            var userLogin = User.FindFirst("Login").Value;
-
-            return null;
+            string login = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+            if (login == null)
+            {
+                return BadRequest();
+            }
+            var res = await _userService.GetOrdersByUserLogin(login);
+            if (res.IsValid == false)
+            {
+                return BadRequest(res);
+            }
+            return Ok(res);
         }
     }
 }

@@ -5,6 +5,7 @@ using Web_Api_LPasto_ASP_NET_Core.Database.Services;
 using Web_Api_LPasto_ASP_NET_Core.Models;
 using Web_Api_LPasto_ASP_NET_Core.Models.EmployeeZone.Output;
 using Web_Api_LPasto_ASP_NET_Core.Models.UserZone.Input;
+using Web_Api_LPasto_ASP_NET_Core.Models.UserZone.Output;
 using Web_Api_LPasto_ASP_NET_Core.Services.Interfaces;
 
 namespace Web_Api_LPasto_ASP_NET_Core.Services
@@ -16,21 +17,37 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
         private readonly IBaseRepo<DishOption> _dishOptionRepo;
         private readonly IBaseRepo<Dish> _dishRepo;
         private readonly IBaseRepo<TypeOrder> _typeOrderRepo;
+        private readonly IBaseRepo<User> _userRepo;
 
-        public UserService(IBaseRepo<Order> orderRepo, IBaseRepo<Order_Dish> orderDishRepo, IBaseRepo<DishOption> dishoptionRepo, IBaseRepo<Dish> dishRepo, IBaseRepo<TypeOrder> typeOrdersRepo)
+        public UserService(IBaseRepo<Order> orderRepo, 
+            IBaseRepo<Order_Dish> orderDishRepo, 
+            IBaseRepo<DishOption> dishoptionRepo, 
+            IBaseRepo<Dish> dishRepo, 
+            IBaseRepo<TypeOrder> typeOrdersRepo,
+            IBaseRepo<User> userRepo)
         {
             _OrderRepo = orderRepo;
             _orderDishRepo = orderDishRepo;
             _dishOptionRepo = dishoptionRepo;
             _dishRepo = dishRepo;
             _typeOrderRepo = typeOrdersRepo;
+            _userRepo = userRepo;
         }
-        public async Task<ResponseService<bool>> CreateOrder(CreateOrder createOrder)
+        public async Task<ResponseService<bool>> CreateOrder(CreateOrder createOrder, string login)
         {
             ResponseService<bool> responseService = new()
             {
                 IsValid = false,
             };
+
+            var users = await _userRepo.GetAllModelsAsync();
+            var properUser = users.FirstOrDefault(x => x.Login == login);
+
+            if(properUser == null)
+            {
+                return responseService;
+            }
+
             foreach (var dish in createOrder.BasketDishes)
             {
                 if (dish.Count < 1)
@@ -65,7 +82,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
 
             Order order = new()
             {
-                userId = createOrder.userId,
+                userId = properUser.Id,
                 Address = createOrder.Address,
                 Appartment = createOrder.Appartment,
                 Floor = createOrder.Floor,
@@ -120,9 +137,50 @@ namespace Web_Api_LPasto_ASP_NET_Core.Services
             return false;
         }
 
-        public Task<OrderDeliveryOutput> GetOrderByUserId(int id)
-        {
-            throw new NotImplementedException();
+        public async Task<ResponseService<List<ShorterOrderOutput>>> GetOrdersByUserLogin(string login)
+        { 
+            var users = await _userRepo.GetAllModelsAsync();
+            var user = users.FirstOrDefault(x => x.Login == login);
+            if (user == null)
+            {
+                return new ResponseService<List<ShorterOrderOutput>>()
+                {
+                    IsValid = false,
+                    Message = "Ошибка авторизации",
+                };
+            }
+
+            var orders = await _OrderRepo.GetAllModelsAsync(new List<System.Linq.Expressions.Expression<Func<Order, object>>>() { d => d.Order_Dishe, s =>s.StatusOrder });
+            if (orders == null)
+            {
+                return new ResponseService<List<ShorterOrderOutput>>()
+                {
+                    IsValid = false,
+                    Message = "Не найдено",
+                };
+            }
+            List<ShorterOrderOutput> shorterOrderOutputs = new();
+            foreach (var order in orders)
+            {
+                ShorterOrderOutput shorterOrder = new()
+                {
+                    orderId = order.Id,
+                    Status = order.StatusOrder.Name,
+                    CountOfDishes = order.Order_Dishe.Count()
+                };
+                foreach (var dishesOrder in order.Order_Dishe)
+                {
+                    var dish = await _dishRepo.GetModelByIdAsync(dishesOrder.dishId);
+                    shorterOrder.Price += dish.Price * dishesOrder.Count;
+                }
+                shorterOrderOutputs.Add(shorterOrder);
+            }
+
+            return new ResponseService<List<ShorterOrderOutput>>()
+            {
+                IsValid = true,
+                Result = shorterOrderOutputs,
+            };
         }
     }
 }

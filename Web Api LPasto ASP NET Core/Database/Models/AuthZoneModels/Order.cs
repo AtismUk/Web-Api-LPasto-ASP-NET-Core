@@ -15,6 +15,7 @@ namespace Web_Api_LPasto_ASP_NET_Core.Database.Models.AuthZoneModels
         public string Describe { get; set; }
         public bool paymentMethod { get; set; }
         public int typeOrderId { get; set; }
+        public float Price { get; set; }
         public DateTime Created { get; set; }
         public StatusOrder StatusOrder { get; set; }
         public TypeOrder typeOrder { get; set; }
